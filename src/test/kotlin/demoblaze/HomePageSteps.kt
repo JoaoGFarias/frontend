@@ -23,14 +23,16 @@ class HomePageSteps: En {
         }
 
         When("select the {string} product in the {string} category") {
-            productName: String, category: String ->
+                productName: String, category: String ->
             run {
 
                 selectCategory(category)
                 selectProduct(productName)
-
             }
+        }
 
+        When("I go to the cart") {
+            driver.findElement(By.id("cartur")).click()
         }
 
         After(HookNoArgsBody { killBrowser() })
