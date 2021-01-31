@@ -41,7 +41,6 @@ class OrderingSteps: En {
         When("select the {string} product in the {string} category") { 
                 productName: String, category: String ->
             run {
-
                 selectCategory(category)
                 selectProduct(productName)
             }
@@ -89,6 +88,7 @@ class OrderingSteps: En {
         driver = ChromeDriver(options)
         driver.manage().window().maximize()
     }
+
     private fun visitHomePage() {
         driver.get("https://www.demoblaze.com/index.html")
     }
