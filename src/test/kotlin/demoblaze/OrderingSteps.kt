@@ -6,22 +6,10 @@ import io.cucumber.java8.En
 import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.chrome.ChromeOptions
 import io.cucumber.java8.HookNoArgsBody
-import org.awaitility.Awaitility.await
-import org.hamcrest.CoreMatchers.`is`
 import org.openqa.selenium.By
 import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.WebDriverWait
 import java.time.Duration
-import org.openqa.selenium.WebDriver
-
-import org.openqa.selenium.WebElement
-
-import org.openqa.selenium.support.ui.FluentWait
-import java.util.concurrent.TimeUnit
-import org.openqa.selenium.StaleElementReferenceException
-
-import org.openqa.selenium.support.ui.ExpectedCondition
-import kotlin.test.assertTrue
 
 
 class OrderingSteps: En {
@@ -57,10 +45,13 @@ class OrderingSteps: En {
             }
         }
 
-        When("I complete the order") {
-            saveExpectedTotal()
-            placeTheOrder()
-            completeForm()
+        When("I complete the order, for the customer with name {string} and credit card {string}") {
+                customerName: String, creditCardNumber: String ->
+            run {
+                saveExpectedTotal()
+                placeTheOrder()
+                completeForm(customerName, creditCardNumber)
+            }
         }
 
         Then("the order is confirmed") {
@@ -104,7 +95,9 @@ class OrderingSteps: En {
         )
 
         val targetProduct = products.find {
-            it.findElement(By.className("card-title")).text == productName
+            WebDriverWait(driver, Duration.ofSeconds(5)).until(
+                ExpectedConditions.elementToBeClickable(it.findElement(By.className("card-title")))
+            ).text == productName
         }
 
         targetProduct?.findElement(By.tagName("a"))?.click()
@@ -139,13 +132,13 @@ class OrderingSteps: En {
         ).click()
     }
 
-    private fun completeForm() {
+    private fun completeForm(customerName: String, creditCardNumber: String) {
         WebDriverWait(driver, Duration.ofSeconds(5)).until(
             ExpectedConditions.elementToBeClickable((By.id("name")))
-        ).sendKeys("Any name")
+        ).sendKeys(customerName)
         WebDriverWait(driver, Duration.ofSeconds(5)).until(
             ExpectedConditions.elementToBeClickable((By.id("card")))
-        ).sendKeys("Any card")
+        ).sendKeys(creditCardNumber)
         driver.findElement(By.cssSelector("#orderModal .modal-footer .btn-primary")).click()
     }
 
