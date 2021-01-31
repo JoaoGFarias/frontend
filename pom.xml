@@ -31,6 +31,7 @@
         <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
         <maven-failsafe-plugin.version>2.22.2</maven-failsafe-plugin.version>
         <awaitility.version>3.0.0</awaitility.version>
+        <kotlin-logging.version>2.0.4</kotlin-logging.version>
     </properties>
 
     <repositories>
@@ -130,9 +131,10 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.awaitility</groupId>
-            <artifactId>awaitility</artifactId>
-            <version>${awaitility.version}</version>
+            <groupId>io.github.microutils</groupId>
+            <artifactId>kotlin-logging</artifactId>
+            <version>${kotlin-logging.version}</version>
+            <type>pom</type>
         </dependency>
     </dependencies>
 

@@ -10,6 +10,7 @@ import org.openqa.selenium.By
 import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.WebDriverWait
 import java.time.Duration
+import java.util.logging.Logger
 
 
 class OrderingSteps: En {
@@ -62,7 +63,9 @@ class OrderingSteps: En {
         Then("the expected total purchase total is the sum of the ordered products") {
             val leadText = findSweetAlert().findElement(By.className("lead")).text!!
             val orderDetails = makeOrderDetails(leadText)
-            assertThat(orderDetails["Amount"]!!.split(" ")[0]).isEqualTo(expectedOrderTotal)
+            assertThat(orderDetails["amount"]!!.split(" ")[0]).isEqualTo(expectedOrderTotal)
+            logger.info("Order id ${orderDetails["id"]}")
+            logger.info("Order amount ${orderDetails["amount"]}")
         }
 
         After(HookNoArgsBody { killBrowser() })
@@ -144,11 +147,15 @@ class OrderingSteps: En {
 
     private fun makeOrderDetails(leadText: String): HashMap<String, String> {
         val orderDetails = HashMap<String, String>()
-        leadText.split("\n").map { it.split(":") }.forEach { orderDetails[it[0]] = it[1].trim() }
+        leadText.split("\n").map { it.split(":") }.forEach { orderDetails[it[0].toLowerCase()] = it[1].trim() }
         return orderDetails
     }
 
     private fun killBrowser() {
         driver.quit()
+    }
+
+    companion object {
+        private val logger = Logger.getLogger(this.javaClass.name)
     }
 }
