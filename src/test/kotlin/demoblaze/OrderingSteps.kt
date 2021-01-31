@@ -9,7 +9,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.WebDriverWait
 import java.time.Duration
 
-class HomePageSteps: En {
+class OrderingSteps: En {
 
 
     private lateinit var driver: ChromeDriver
@@ -22,7 +22,7 @@ class HomePageSteps: En {
             visitHomePage()
         }
 
-        When("select the {string} product in the {string} category") {
+        When("select the {string} product in the {string} category") { 
                 productName: String, category: String ->
             run {
 
@@ -33,6 +33,13 @@ class HomePageSteps: En {
 
         When("I go to the cart") {
             driver.findElement(By.id("cartur")).click()
+        }
+
+        When("I delete the {string} from the cart") { 
+                productName: String ->
+            run {
+                deleteProductFromCart(productName)
+            }
         }
 
         After(HookNoArgsBody { killBrowser() })
@@ -67,6 +74,15 @@ class HomePageSteps: En {
         WebDriverWait(driver, Duration.ofSeconds(5)).until(ExpectedConditions.alertIsPresent());
         driver.switchTo().alert().accept()
         visitHomePage()
+    }
+
+    private fun deleteProductFromCart(productName: String) {
+        val products = WebDriverWait(driver, Duration.ofSeconds(5)).until(
+            ExpectedConditions.presenceOfAllElementsLocatedBy((By.cssSelector("#tbodyid .success")))
+        )
+        val targetProduct = products.find { it.text.contains(productName) }
+        targetProduct?.findElement(By.tagName("a"))?.click()
+
     }
 
     private fun killBrowser() {
