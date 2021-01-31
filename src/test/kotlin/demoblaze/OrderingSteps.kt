@@ -4,10 +4,30 @@ import io.cucumber.java8.En
 import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.chrome.ChromeOptions
 import io.cucumber.java8.HookNoArgsBody
+import org.awaitility.Awaitility.await
+import org.hamcrest.CoreMatchers.`is`
 import org.openqa.selenium.By
 import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.WebDriverWait
 import java.time.Duration
+import org.openqa.selenium.WebDriver
+
+import org.openqa.selenium.WebElement
+
+import org.openqa.selenium.support.ui.FluentWait
+import java.util.concurrent.TimeUnit
+import org.openqa.selenium.StaleElementReferenceException
+
+import org.openqa.selenium.support.ui.ExpectedCondition
+
+
+
+
+
+
+
+
+
 
 class OrderingSteps: En {
 
@@ -42,6 +62,11 @@ class OrderingSteps: En {
             }
         }
 
+        When("I complete the order") {
+            placeTheOrder()
+            completeForm()
+        }
+
         After(HookNoArgsBody { killBrowser() })
     }
 
@@ -63,9 +88,12 @@ class OrderingSteps: En {
 
     private fun selectProduct(productName: String) {
         val products = WebDriverWait(driver, Duration.ofSeconds(5)).until(
-            ExpectedConditions.presenceOfAllElementsLocatedBy((By.cssSelector("#tbodyid .card")))
+            ExpectedConditions.visibilityOfAllElementsLocatedBy((By.cssSelector("#tbodyid .card")))
         )
-        val targetProduct = products.find { it.findElement(By.className("card-title")).text == productName }
+
+        val targetProduct = products.find {
+            it.findElement(By.className("card-title")).text == productName
+        }
 
         targetProduct?.findElement(By.tagName("a"))?.click()
         WebDriverWait(driver, Duration.ofSeconds(5)).until(
@@ -80,9 +108,27 @@ class OrderingSteps: En {
         val products = WebDriverWait(driver, Duration.ofSeconds(5)).until(
             ExpectedConditions.presenceOfAllElementsLocatedBy((By.cssSelector("#tbodyid .success")))
         )
-        val targetProduct = products.find { it.text.contains(productName) }
-        targetProduct?.findElement(By.tagName("a"))?.click()
+        val targetProduct = products.find { it.text.contains(productName) }!!
+        targetProduct.findElement(By.tagName("a")).click()
+        WebDriverWait(driver, Duration.ofSeconds(5)).until(
+            ExpectedConditions.invisibilityOf(targetProduct)
+        )
+    }
 
+    private fun placeTheOrder() {
+        WebDriverWait(driver, Duration.ofSeconds(5)).until(
+            ExpectedConditions.elementToBeClickable((By.className("btn-success")))
+        ).click()
+    }
+
+    private fun completeForm() {
+        WebDriverWait(driver, Duration.ofSeconds(5)).until(
+            ExpectedConditions.elementToBeClickable((By.id("name")))
+        ).sendKeys("Any name")
+        WebDriverWait(driver, Duration.ofSeconds(5)).until(
+            ExpectedConditions.elementToBeClickable((By.id("card")))
+        ).sendKeys("Any card")
+        driver.findElement(By.cssSelector("#orderModal .modal-footer .btn-primary")).click()
     }
 
     private fun killBrowser() {
