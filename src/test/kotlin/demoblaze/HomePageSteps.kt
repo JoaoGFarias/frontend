@@ -1,9 +1,12 @@
+package demoblaze
+
 import io.cucumber.java8.En
 import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.chrome.ChromeOptions
 import io.cucumber.java8.HookNoArgsBody
 
-class StepDefs: En {
+class HomePageSteps: En {
+
 
     private lateinit var driver: ChromeDriver
 
@@ -11,11 +14,8 @@ class StepDefs: En {
 
         Before(HookNoArgsBody { startBrowser() })
 
-        Given("I have {int} cukes in my belly") { int1: Int? ->
-            // all good
-        }
-        When("I wait {int} hour") { int1: Int? ->
-            // all good
+        Given("I am on the Demoblaze Home page") {
+            driver.get("https://www.demoblaze.com/index.html")
         }
 
         After(HookNoArgsBody { killBrowser() })
