@@ -1,5 +1,7 @@
 package demoblaze
 
+import assertk.assertThat
+import assertk.assertions.isEqualTo
 import io.cucumber.java8.En
 import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.chrome.ChromeOptions
@@ -19,19 +21,13 @@ import java.util.concurrent.TimeUnit
 import org.openqa.selenium.StaleElementReferenceException
 
 import org.openqa.selenium.support.ui.ExpectedCondition
-
-
-
-
-
-
-
-
+import kotlin.test.assertTrue
 
 
 class OrderingSteps: En {
 
 
+    private lateinit var expectedOrderTotal: String
     private lateinit var driver: ChromeDriver
 
     init {
@@ -63,12 +59,29 @@ class OrderingSteps: En {
         }
 
         When("I complete the order") {
+            saveExpectedTotal()
             placeTheOrder()
             completeForm()
         }
 
+        Then("the order is confirmed") {
+            val successIcon = findSweetAlert().findElement(By.className("sa-success"))
+            assertThat(successIcon.getCssValue("display")).isEqualTo("block")
+        }
+
+        Then("the expected total purchase total is the sum of the ordered products") {
+            val leadText = findSweetAlert().findElement(By.className("lead")).text!!
+            val orderDetails = makeOrderDetails(leadText)
+            assertThat(orderDetails["Amount"]!!.split(" ")[0]).isEqualTo(expectedOrderTotal)
+        }
+
         After(HookNoArgsBody { killBrowser() })
     }
+
+
+    private fun findSweetAlert() = WebDriverWait(driver, Duration.ofSeconds(5)).until(
+        ExpectedConditions.visibilityOfElementLocated((By.className("sweet-alert")))
+    )
 
     private fun startBrowser() {
         val options = ChromeOptions()
@@ -76,7 +89,6 @@ class OrderingSteps: En {
         driver = ChromeDriver(options)
         driver.manage().window().maximize()
     }
-
     private fun visitHomePage() {
         driver.get("https://www.demoblaze.com/index.html")
     }
@@ -115,6 +127,12 @@ class OrderingSteps: En {
         )
     }
 
+    private fun saveExpectedTotal() {
+        expectedOrderTotal = WebDriverWait(driver, Duration.ofSeconds(5)).until(
+            ExpectedConditions.visibilityOfElementLocated((By.id("totalp")))
+        ).text
+    }
+
     private fun placeTheOrder() {
         WebDriverWait(driver, Duration.ofSeconds(5)).until(
             ExpectedConditions.elementToBeClickable((By.className("btn-success")))
@@ -129,6 +147,12 @@ class OrderingSteps: En {
             ExpectedConditions.elementToBeClickable((By.id("card")))
         ).sendKeys("Any card")
         driver.findElement(By.cssSelector("#orderModal .modal-footer .btn-primary")).click()
+    }
+
+    private fun makeOrderDetails(leadText: String): HashMap<String, String> {
+        val orderDetails = HashMap<String, String>()
+        leadText.split("\n").map { it.split(":") }.forEach { orderDetails[it[0]] = it[1].trim() }
+        return orderDetails
     }
 
     private fun killBrowser() {

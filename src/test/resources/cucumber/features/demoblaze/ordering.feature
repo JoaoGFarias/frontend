@@ -7,5 +7,5 @@ Feature: Ordering of products on Demoblaze e-commerce
     And I go to the cart
     And I delete the "Dell i7 8gb" from the cart
     And I complete the order
-#    Then the order is confirmed
-#    And the expected total purchase total is the sum of the ordered products
+    Then the order is confirmed
+    And the expected total purchase total is the sum of the ordered products
