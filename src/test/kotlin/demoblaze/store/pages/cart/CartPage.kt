@@ -5,6 +5,7 @@ import org.openqa.selenium.By
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.WebElement
 import org.openqa.selenium.support.ui.ExpectedConditions
+import java.util.logging.Logger
 
 class CartPage(private val driver: WebDriver) {
 
@@ -65,7 +66,25 @@ class CartPage(private val driver: WebDriver) {
         ExpectedConditions.visibilityOfElementLocated((sweetAlertLocator))
     )
 
+    fun findTotalPurchasePrice(): Double {
+        val leadText = findSweetAlert().findElement(By.className("lead")).text!!
+        val orderDetails = makeOrderDetails(leadText)
+        logger.info("Order id ${orderDetails["id"]}")
+        logger.info("Order amount ${orderDetails["amount"]}")
+        return extractValueOfOrder(orderDetails)
+    }
+
+    private fun makeOrderDetails(leadText: String): HashMap<String, String> {
+        val orderDetails = HashMap<String, String>()
+        leadText.split("\n").map { it.split(":") }.forEach { orderDetails[it[0].toLowerCase()] = it[1].trim() }
+        return orderDetails
+    }
+
+    private fun extractValueOfOrder(orderDetails: HashMap<String, String>) =
+        orderDetails["amount"]!!.split(" ")[0].toDouble()
+
     companion object {
+        private val logger = Logger.getLogger(this.javaClass.name)
         private val allProductsLocator = By.cssSelector("#tbodyid .success")
         private val productDeleteButtonLocator = By.tagName("a")
         private val totalPriceLocator = By.id("totalp")

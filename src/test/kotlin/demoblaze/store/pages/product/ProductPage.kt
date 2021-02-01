@@ -10,7 +10,7 @@ class ProductPage(private val driver: WebDriver) {
         Wait.defaultWait(driver).until(
             ExpectedConditions.elementToBeClickable(addToCartButtonLocator)
         ).click()
-        Wait.defaultWait(driver).until(ExpectedConditions.alertIsPresent());
+        Wait.defaultWait(driver).until(ExpectedConditions.alertIsPresent())
         driver.switchTo().alert().accept()
     }
 

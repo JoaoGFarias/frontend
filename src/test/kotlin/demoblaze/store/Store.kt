@@ -1,15 +1,9 @@
 package demoblaze.store
 
-import assertk.assertThat
-import assertk.assertions.isEqualTo
 import demoblaze.store.pages.cart.CartPage
 import demoblaze.store.pages.home.HomePage
 import demoblaze.store.stateobjects.Cart
-import org.openqa.selenium.By
 import org.openqa.selenium.WebDriver
-import org.openqa.selenium.support.ui.ExpectedConditions
-import org.openqa.selenium.support.ui.WebDriverWait
-import java.time.Duration
 
 class Store(
     private val driver: WebDriver,
@@ -29,7 +23,6 @@ class Store(
 
     fun addProductToCart(productName: String, category: String) {
         selectCategory(category)
-        Thread.sleep(2500)
         selectProduct(productName)
     }
 
@@ -68,5 +61,8 @@ class Store(
 
     fun `is successful purchase icon visible`() =
         cartPage.`is successful purchase icon visible`()
+
+    fun findTotalPurchasePrice() =
+        cartPage.findTotalPurchasePrice()
 }
 
