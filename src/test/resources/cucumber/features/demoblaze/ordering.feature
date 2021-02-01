@@ -4,7 +4,7 @@ Feature: Ordering of products on Demoblaze e-commerce
     Given I am on the Demoblaze Home page
     When select the "Sony vaio i5" product in the "Laptops" category
     And select the "Dell i7 8gb" product in the "Laptops" category
-    #And I go to the cart
+    And I go to the cart
     #And I delete the "Dell i7 8gb" from the cart
     #And I complete the order, for the customer with name "<name>" and credit card "<credit_card_number>"
     #Then the order is confirmed

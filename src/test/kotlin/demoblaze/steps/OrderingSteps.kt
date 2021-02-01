@@ -38,7 +38,7 @@ class OrderingSteps: En {
         }
 
         When("I go to the cart") {
-            driver.findElement(By.id("cartur")).click()
+            store.goToCart()
         }
 
         When("I delete the {string} from the cart") { 

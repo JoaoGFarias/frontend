@@ -1,5 +1,6 @@
 package demoblaze.store
 
+import demoblaze.store.pages.cart.CartPage
 import demoblaze.store.pages.home.HomePage
 import demoblaze.store.stateobjects.Cart
 import org.openqa.selenium.By
@@ -7,12 +8,12 @@ import org.openqa.selenium.WebDriver
 import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.WebDriverWait
 import java.time.Duration
-
 class Store(
     private val driver: WebDriver,
     val cart: Cart = Cart()
 ) {
 
+    private lateinit var cartPage: CartPage
     private lateinit var homePage: HomePage
 
     fun visitHomePage() {
@@ -38,4 +39,9 @@ class Store(
         productPage.addProductToCart()
         this.visitHomePage()
     }
+
+    fun goToCart() {
+        cartPage = homePage.goToCart()
+    }
 }
+
