@@ -33,9 +33,7 @@ class OrderingSteps: En {
         When("select the {string} product in the {string} category") { 
                 productName: String, category: String ->
             run {
-                selectCategory(category)
-                Thread.sleep(2000)
-                selectProduct(productName)
+                store.addProductToCart(productName = productName, category = category)
             }
         }
 
