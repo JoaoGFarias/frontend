@@ -16,7 +16,7 @@ class Store(
     private lateinit var homePage: HomePage
 
     fun visitHomePage() {
-        homePage = HomePage(driver)
+        homePage = HomePage(driver).openPage()
     }
 
     fun closeStore() {
@@ -34,7 +34,8 @@ class Store(
     }
 
     private fun selectProduct(productName: String) {
-        homePage.selectProduct(productName)
+        val productPage = homePage.selectProduct(productName)
+        productPage.addProductToCart()
         this.visitHomePage()
     }
 }

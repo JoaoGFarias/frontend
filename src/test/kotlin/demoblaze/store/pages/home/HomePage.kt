@@ -1,42 +1,63 @@
 package demoblaze.store.pages.home
 
+import demoblaze.objects.Wait
+import demoblaze.store.pages.product.ProductPage
 import org.openqa.selenium.By
 import org.openqa.selenium.WebDriver
+import org.openqa.selenium.WebElement
 import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.WebDriverWait
 import java.time.Duration
 
 class HomePage(private val driver: WebDriver) {
 
-    init {
-        openPage()
-    }
-
-    private fun openPage() {
+    fun openPage(): HomePage {
         driver.get("https://www.demoblaze.com/index.html")
+        return this
     }
 
     fun selectCategory(category: String) {
-        val categories = driver.findElement(By.className("list-group"))
+        val categories = findCategories()
+        selectCategory(categories, category)
+    }
+
+    private fun findCategories() = driver.findElement(categoriesLocator)
+
+    private fun selectCategory(categories: WebElement, category: String) {
         categories.findElement(By.ByXPath("//a[text()='$category']")).click()
     }
 
-    fun selectProduct(productName: String) {
-        val products = WebDriverWait(driver, Duration.ofSeconds(5)).until(
-            ExpectedConditions.presenceOfAllElementsLocatedBy((By.cssSelector("#tbodyid .card")))
-        )
+    fun selectProduct(productName: String): ProductPage {
+        val products = findAllProducts()
 
-        val targetProduct = products.find {
-            WebDriverWait(driver, Duration.ofSeconds(5)).until(
-                ExpectedConditions.elementToBeClickable(it.findElement(By.className("card-title")))
-            ).text == productName
-        }
+        val targetProduct = findProductByName(products, productName)
 
-        targetProduct?.findElement(By.tagName("a"))?.click()
-        WebDriverWait(driver, Duration.ofSeconds(5)).until(
-            ExpectedConditions.elementToBeClickable((By.className("btn-success")))
-        ).click()
-        WebDriverWait(driver, Duration.ofSeconds(5)).until(ExpectedConditions.alertIsPresent());
-        driver.switchTo().alert().accept()
+        selectProduct(targetProduct)
+        return ProductPage(driver)
+    }
+
+    private fun findAllProducts() = Wait.defaultWait(driver).until(
+        ExpectedConditions.presenceOfAllElementsLocatedBy(productLocator)
+    )
+
+    private fun selectProduct(targetProduct: WebElement?) {
+        targetProduct!!.findElement(productLinkLocator)!!.click()
+    }
+
+    private fun findProductByName(
+        products: MutableList<WebElement>,
+        productName: String
+    ) = products.find {
+        Wait.defaultWait(driver).until(
+            ExpectedConditions.elementToBeClickable(it.findElement(productNameLocator))
+        ).text == productName
+    }
+
+    companion object {
+        private val categoriesLocator = By.className("list-group")
+        private val productLocator = By.cssSelector("#tbodyid .card")
+        private val productLinkLocator = By.tagName("a")
+        private val productNameLocator = By.className("card-title")
+
     }
 }
