@@ -54,7 +54,7 @@ class HomePage(private val driver: WebDriver) {
 
     fun goToCart(): CartPage {
         driver.findElement(cartPageLink).click()
-        return CartPage()
+        return CartPage(driver)
     }
 
     companion object {
@@ -63,6 +63,5 @@ class HomePage(private val driver: WebDriver) {
         private val productLinkLocator = By.tagName("a")
         private val productNameLocator = By.className("card-title")
         private val cartPageLink = By.id("cartur")
-
     }
 }

@@ -43,5 +43,10 @@ class Store(
     fun goToCart() {
         cartPage = homePage.goToCart()
     }
+
+
+    fun deleteProductFromCart(productName: String) {
+        cartPage.deleteProductFromCart(productName)
+    }
 }
 

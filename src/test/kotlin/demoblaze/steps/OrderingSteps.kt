@@ -44,7 +44,7 @@ class OrderingSteps: En {
         When("I delete the {string} from the cart") { 
                 productName: String ->
             run {
-                deleteProductFromCart(productName)
+                store.deleteProductFromCart(productName)
             }
         }
 
@@ -108,18 +108,6 @@ class OrderingSteps: En {
         WebDriverWait(driver, Duration.ofSeconds(5)).until(ExpectedConditions.alertIsPresent());
         driver.switchTo().alert().accept()
         store.visitHomePage()
-    }
-
-    private fun deleteProductFromCart(productName: String) {
-        val products = WebDriverWait(driver, Duration.ofSeconds(5)).until(
-            ExpectedConditions.visibilityOfAllElementsLocatedBy((By.cssSelector("#tbodyid .success")))
-        )
-
-        val targetProduct = products.find { it.text.contains(productName) }!!
-        targetProduct.findElement(By.tagName("a")).click()
-        WebDriverWait(driver, Duration.ofSeconds(5)).until(
-            ExpectedConditions.invisibilityOf(targetProduct)
-        )
     }
 
     private fun saveExpectedTotal() {
