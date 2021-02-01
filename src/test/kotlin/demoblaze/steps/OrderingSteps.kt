@@ -2,6 +2,7 @@ package demoblaze.steps
 
 import assertk.assertThat
 import assertk.assertions.isEqualTo
+import assertk.assertions.isTrue
 import com.google.common.util.concurrent.AtomicDouble
 import demoblaze.store.Store
 import io.cucumber.java8.En
@@ -51,15 +52,14 @@ class OrderingSteps: En {
         When("I complete the order, for the customer with name {string} and credit card {string}") {
                 customerName: String, creditCardNumber: String ->
             run {
-                saveExpectedTotal()
-                placeTheOrder()
-                completeForm(customerName, creditCardNumber)
+                store.saveExpectedTotal()
+                store.placeTheOrder()
+                store.completeForm(customerName, creditCardNumber)
             }
         }
 
         Then("the order is confirmed") {
-            val successIcon = findSweetAlert().findElement(By.className("sa-success"))
-            assertThat(successIcon.getCssValue("display")).isEqualTo("block")
+            assertThat(store.`is successful purchase icon visible`()).isTrue()
         }
 
         Then("the expected total purchase total is the sum of the ordered products") {
@@ -108,32 +108,6 @@ class OrderingSteps: En {
         WebDriverWait(driver, Duration.ofSeconds(5)).until(ExpectedConditions.alertIsPresent());
         driver.switchTo().alert().accept()
         store.visitHomePage()
-    }
-
-    private fun saveExpectedTotal() {
-        store.cart.addItem(
-            getTotalPrice().toDouble()
-        )
-    }
-
-    private fun getTotalPrice() = WebDriverWait(driver, Duration.ofSeconds(5)).until(
-        ExpectedConditions.visibilityOfElementLocated((By.id("totalp")))
-    ).text
-
-    private fun placeTheOrder() {
-        WebDriverWait(driver, Duration.ofSeconds(5)).until(
-            ExpectedConditions.elementToBeClickable((By.className("btn-success")))
-        ).click()
-    }
-
-    private fun completeForm(customerName: String, creditCardNumber: String) {
-        WebDriverWait(driver, Duration.ofSeconds(5)).until(
-            ExpectedConditions.elementToBeClickable((By.id("name")))
-        ).sendKeys(customerName)
-        WebDriverWait(driver, Duration.ofSeconds(5)).until(
-            ExpectedConditions.elementToBeClickable((By.id("card")))
-        ).sendKeys(creditCardNumber)
-        driver.findElement(By.cssSelector("#orderModal .modal-footer .btn-primary")).click()
     }
 
     private fun findSweetAlert() = WebDriverWait(driver, Duration.ofSeconds(5)).until(
