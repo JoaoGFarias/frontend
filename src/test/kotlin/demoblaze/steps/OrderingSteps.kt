@@ -1,12 +1,15 @@
-package demoblaze
+package demoblaze.steps
 
 import assertk.assertThat
 import assertk.assertions.isEqualTo
+import com.google.common.util.concurrent.AtomicDouble
+import demoblaze.store.Store
 import io.cucumber.java8.En
 import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.chrome.ChromeOptions
 import io.cucumber.java8.HookNoArgsBody
 import org.openqa.selenium.By
+import org.openqa.selenium.WebDriver
 import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.WebDriverWait
 import java.time.Duration
@@ -16,21 +19,22 @@ import java.util.logging.Logger
 class OrderingSteps: En {
 
 
-    private lateinit var expectedOrderTotal: String
+    private lateinit var store: Store
     private lateinit var driver: ChromeDriver
 
     init {
 
-        Before(HookNoArgsBody { startBrowser() })
+        Before(HookNoArgsBody { startStore() })
 
         Given("I am on the Demoblaze Home page") {
-            visitHomePage()
+            store.visitHomePage()
         }
 
         When("select the {string} product in the {string} category") { 
                 productName: String, category: String ->
             run {
                 selectCategory(category)
+                Thread.sleep(2000)
                 selectProduct(productName)
             }
         }
@@ -63,28 +67,24 @@ class OrderingSteps: En {
         Then("the expected total purchase total is the sum of the ordered products") {
             val leadText = findSweetAlert().findElement(By.className("lead")).text!!
             val orderDetails = makeOrderDetails(leadText)
-            assertThat(orderDetails["amount"]!!.split(" ")[0]).isEqualTo(expectedOrderTotal)
+            assertThat(orderDetails["amount"]!!.split(" ")[0].toDouble()).isEqualTo(store.cart.getTotal())
             logger.info("Order id ${orderDetails["id"]}")
             logger.info("Order amount ${orderDetails["amount"]}")
         }
 
-        After(HookNoArgsBody { killBrowser() })
+        After(HookNoArgsBody { closeStore() })
     }
 
+    private fun startStore() {
+        store = Store(startBrowser())
+    }
 
-    private fun findSweetAlert() = WebDriverWait(driver, Duration.ofSeconds(5)).until(
-        ExpectedConditions.visibilityOfElementLocated((By.className("sweet-alert")))
-    )
-
-    private fun startBrowser() {
+    private fun startBrowser(): WebDriver {
         val options = ChromeOptions()
         options.setBinary("/usr/bin/brave")
         driver = ChromeDriver(options)
         driver.manage().window().maximize()
-    }
-
-    private fun visitHomePage() {
-        driver.get("https://www.demoblaze.com/index.html")
+        return driver
     }
 
     private fun selectCategory(category: String) {
@@ -94,7 +94,7 @@ class OrderingSteps: En {
 
     private fun selectProduct(productName: String) {
         val products = WebDriverWait(driver, Duration.ofSeconds(5)).until(
-            ExpectedConditions.visibilityOfAllElementsLocatedBy((By.cssSelector("#tbodyid .card")))
+            ExpectedConditions.presenceOfAllElementsLocatedBy((By.cssSelector("#tbodyid .card")))
         )
 
         val targetProduct = products.find {
@@ -109,13 +109,14 @@ class OrderingSteps: En {
         ).click()
         WebDriverWait(driver, Duration.ofSeconds(5)).until(ExpectedConditions.alertIsPresent());
         driver.switchTo().alert().accept()
-        visitHomePage()
+        store.visitHomePage()
     }
 
     private fun deleteProductFromCart(productName: String) {
         val products = WebDriverWait(driver, Duration.ofSeconds(5)).until(
-            ExpectedConditions.presenceOfAllElementsLocatedBy((By.cssSelector("#tbodyid .success")))
+            ExpectedConditions.visibilityOfAllElementsLocatedBy((By.cssSelector("#tbodyid .success")))
         )
+
         val targetProduct = products.find { it.text.contains(productName) }!!
         targetProduct.findElement(By.tagName("a")).click()
         WebDriverWait(driver, Duration.ofSeconds(5)).until(
@@ -124,10 +125,14 @@ class OrderingSteps: En {
     }
 
     private fun saveExpectedTotal() {
-        expectedOrderTotal = WebDriverWait(driver, Duration.ofSeconds(5)).until(
-            ExpectedConditions.visibilityOfElementLocated((By.id("totalp")))
-        ).text
+        store.cart.addItem(
+            getTotalPrice().toDouble()
+        )
     }
+
+    private fun getTotalPrice() = WebDriverWait(driver, Duration.ofSeconds(5)).until(
+        ExpectedConditions.visibilityOfElementLocated((By.id("totalp")))
+    ).text
 
     private fun placeTheOrder() {
         WebDriverWait(driver, Duration.ofSeconds(5)).until(
@@ -145,14 +150,18 @@ class OrderingSteps: En {
         driver.findElement(By.cssSelector("#orderModal .modal-footer .btn-primary")).click()
     }
 
+    private fun findSweetAlert() = WebDriverWait(driver, Duration.ofSeconds(5)).until(
+        ExpectedConditions.visibilityOfElementLocated((By.className("sweet-alert")))
+    )
+
     private fun makeOrderDetails(leadText: String): HashMap<String, String> {
         val orderDetails = HashMap<String, String>()
         leadText.split("\n").map { it.split(":") }.forEach { orderDetails[it[0].toLowerCase()] = it[1].trim() }
         return orderDetails
     }
 
-    private fun killBrowser() {
-        driver.quit()
+    private fun closeStore() {
+        store.closeStore()
     }
 
     companion object {
