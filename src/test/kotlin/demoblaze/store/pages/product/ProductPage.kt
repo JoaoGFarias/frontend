@@ -1,17 +1,13 @@
 package demoblaze.store.pages.product
 
-import demoblaze.objects.Wait
+import demoblaze.store.pages.Page
 import org.openqa.selenium.By
 import org.openqa.selenium.WebDriver
-import org.openqa.selenium.support.ui.ExpectedConditions
 
-class ProductPage(private val driver: WebDriver) {
+class ProductPage(driver: WebDriver): Page(driver) {
     fun addProductToCart() {
-        Wait.defaultWait(driver).until(
-            ExpectedConditions.elementToBeClickable(addToCartButtonLocator)
-        ).click()
-        Wait.defaultWait(driver).until(ExpectedConditions.alertIsPresent())
-        driver.switchTo().alert().accept()
+        clickWhenAvailable(addToCartButtonLocator)
+        acceptAlert()
     }
 
     companion object {

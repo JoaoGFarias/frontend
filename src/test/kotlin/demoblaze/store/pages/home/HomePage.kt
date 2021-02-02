@@ -1,22 +1,19 @@
 package demoblaze.store.pages.home
 
-import demoblaze.objects.Wait
+import demoblaze.store.pages.Page
 import demoblaze.store.pages.cart.CartPage
 import demoblaze.store.pages.product.ProductPage
 import org.openqa.selenium.By
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.WebElement
-import org.openqa.selenium.support.ui.ExpectedConditions
-import org.openqa.selenium.StaleElementReferenceException
-
-import org.openqa.selenium.support.ui.WebDriverWait
-import java.util.function.Function
 
 
-class HomePage(private val driver: WebDriver) {
+class HomePage(private val driver: WebDriver): Page(driver) {
+
+    private val url = "https://www.demoblaze.com/index.html"
 
     fun openPage(): HomePage {
-        driver.get("https://www.demoblaze.com/index.html")
+        open(url)
         return this
     }
 
@@ -25,7 +22,7 @@ class HomePage(private val driver: WebDriver) {
         selectCategory(categories, category)
     }
 
-    private fun findCategories() = driver.findElement(categoriesLocator)
+    private fun findCategories() = find(categoriesLocator)
 
     private fun selectCategory(categories: WebElement, category: String) {
         categories.findElement(makeLinkLocatorByInnerText(category)).click()
@@ -39,18 +36,13 @@ class HomePage(private val driver: WebDriver) {
     private fun clickOnProductByName(
         productName: String
     ) {
-        Wait.defaultWait(driver)
-            .ignoring(StaleElementReferenceException::class.java)
-            .until {
-                findProductByName(productName).click()
-                true
-            }
+        clickWhenAvailable(finder = { findProductByName(productName) })
     }
 
-    private fun findProductByName(productName: String) = driver.findElement(makeLinkLocatorByInnerText(productName))
+    private fun findProductByName(productName: String) = find(makeLinkLocatorByInnerText(productName))
 
     fun goToCart(): CartPage {
-        driver.findElement(cartPageLinkLocator).click()
+        clickWhenAvailable(cartPageLinkLocator)
         return CartPage(driver)
     }
 

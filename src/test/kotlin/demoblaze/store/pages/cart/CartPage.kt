@@ -1,13 +1,14 @@
 package demoblaze.store.pages.cart
 
 import demoblaze.objects.Wait
+import demoblaze.store.pages.Page
 import org.openqa.selenium.By
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.WebElement
 import org.openqa.selenium.support.ui.ExpectedConditions
 import java.util.logging.Logger
 
-class CartPage(private val driver: WebDriver) {
+class CartPage(private val driver: WebDriver): Page(driver) {
 
     fun deleteProductFromCart(productName: String) {
         val targetProduct = findProductByName(productName)
@@ -22,29 +23,21 @@ class CartPage(private val driver: WebDriver) {
         return products.find { it.text.contains(productName) }!!
     }
 
-    private fun findAllProducts() = Wait.defaultWait(driver).until(
-        ExpectedConditions.visibilityOfAllElementsLocatedBy((allProductsLocator))
-    )
+    private fun findAllProducts() = findAllWhenAvailable(allProductsLocator)
 
     private fun deleteProduct(targetProduct: WebElement) {
-        targetProduct.findElement(productDeleteButtonLocator).click()
+        click(targetProduct, productDeleteButtonLocator)
     }
 
     private fun waitProductDisappear(targetProduct: WebElement) {
-        Wait.defaultWait(driver).until(
-            ExpectedConditions.invisibilityOf(targetProduct)
-        )
+        waitToDisappear(targetProduct)
     }
 
     fun getTotalPrice() =
-        Wait.defaultWait(driver).until(
-            ExpectedConditions.visibilityOfElementLocated((totalPriceLocator))
-        ).text.toDouble()
+        getTextWhenAvailable(totalPriceLocator).toDouble()
 
     fun placeOrder() {
-        Wait.defaultWait(driver).until(
-            ExpectedConditions.elementToBeClickable((placeOrderButtonLocator))
-        ).click()
+        clickWhenAvailable(placeOrderButtonLocator)
     }
 
     fun completeForm(customerName: String, creditCardNumber: String) {
@@ -54,32 +47,26 @@ class CartPage(private val driver: WebDriver) {
     }
 
     private fun addCustomerName(customerName: String) {
-        Wait.defaultWait(driver).until(
-            ExpectedConditions.elementToBeClickable((customerNameLocator))
-        ).sendKeys(customerName)
+        sendText(locator = customerNameLocator, text = customerName)
     }
 
     private fun addCreditCard(creditCardNumber: String) {
-        Wait.defaultWait(driver).until(
-            ExpectedConditions.elementToBeClickable((customerCardLocator))
-        ).sendKeys(creditCardNumber)
+        sendText(locator = customerCardLocator, text = creditCardNumber)
     }
 
     private fun completePurchase() {
-        driver.findElement(purchaseButtonLocator).click()
+        click(purchaseButtonLocator)
     }
 
     fun `is successful purchase icon visible`() =
         findSuccessIcon().getCssValue("display") == "block"
 
-    private fun findSuccessIcon() = findSweetAlert().findElement(successIconLocator)
+    private fun findSuccessIcon() = find(findSweetAlert(), successIconLocator)
 
-    private fun findSweetAlert() = Wait.defaultWait(driver).until(
-        ExpectedConditions.visibilityOfElementLocated((sweetAlertLocator))
-    )
+    private fun findSweetAlert() = findWhenAvailable(sweetAlertLocator)
 
     fun findTotalPurchasePrice(): Double {
-        val leadText = findSweetAlert().findElement(By.className("lead")).text!!
+        val leadText = find(findSweetAlert(), leadLocator).text!!
         val orderDetails = makeOrderDetails(leadText)
         logger.info("Order id ${orderDetails["id"]}")
         logger.info("Order amount ${orderDetails["amount"]}")
@@ -103,6 +90,7 @@ class CartPage(private val driver: WebDriver) {
         private val placeOrderButtonLocator = By.className("btn-success")
         private val customerNameLocator = By.id("name")
         private val customerCardLocator = By.id("card")
+        private val leadLocator = By.className("lead")
         private val purchaseButtonLocator = By.cssSelector("#orderModal .modal-footer .btn-primary")
         private val sweetAlertLocator = By.className("sweet-alert")
         private val successIconLocator = By.className("sa-success")
