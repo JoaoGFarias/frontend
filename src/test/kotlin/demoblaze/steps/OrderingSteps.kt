@@ -3,27 +3,16 @@ package demoblaze.steps
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isTrue
-import com.google.common.util.concurrent.AtomicDouble
+import browser.Browser
 import demoblaze.store.Store
 import io.cucumber.java8.En
-import org.openqa.selenium.chrome.ChromeDriver
-import org.openqa.selenium.chrome.ChromeOptions
 import io.cucumber.java8.HookNoArgsBody
-import org.openqa.selenium.By
 import org.openqa.selenium.WebDriver
-import org.openqa.selenium.firefox.FirefoxDriver
-import org.openqa.selenium.firefox.FirefoxOptions
-import org.openqa.selenium.support.ui.ExpectedConditions
-import org.openqa.selenium.support.ui.WebDriverWait
-import java.time.Duration
-import java.util.logging.Logger
 
-
-class OrderingSteps: En {
+class OrderingSteps(private val browser: Browser): En {
 
 
     private lateinit var store: Store
-    private lateinit var driver: WebDriver
 
     init {
 
@@ -33,7 +22,7 @@ class OrderingSteps: En {
             store.visitHomePage()
         }
 
-        When("select the {string} product in the {string} category") { 
+        When("select the {string} product in the {string} category") {
                 productName: String, category: String ->
             run {
                 store.addProductToCart(productName = productName, category = category)
@@ -69,22 +58,9 @@ class OrderingSteps: En {
             assertThat(totalPrice).isEqualTo(store.cart.getTotal())
         }
 
-        After(HookNoArgsBody { closeStore() })
     }
 
     private fun startStore() {
-        store = Store(startBrowser())
-    }
-
-    private fun startBrowser(): WebDriver {
-        val options = FirefoxOptions()
-        options.addArguments("--headless")
-        driver = FirefoxDriver(options)
-        driver.manage().window().maximize()
-        return driver
-    }
-
-    private fun closeStore() {
-        store.closeStore()
+        store = Store(browser)
     }
 }

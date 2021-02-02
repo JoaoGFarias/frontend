@@ -32,6 +32,7 @@
         <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
         <maven-failsafe-plugin.version>2.22.2</maven-failsafe-plugin.version>
         <kotlin-logging.version>2.0.4</kotlin-logging.version>
+        <cucumber-picocontainer.version>1.2.6</cucumber-picocontainer.version>
     </properties>
 
     <repositories>
@@ -141,6 +142,13 @@
             <artifactId>junit-vintage-engine</artifactId>
             <version>${junit-vintage-engine.version}</version>
         </dependency>
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-picocontainer</artifactId>
+            <version>${cucumber.version}</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
 </project>
