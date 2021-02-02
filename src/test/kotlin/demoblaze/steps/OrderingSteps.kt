@@ -7,7 +7,6 @@ import browser.Browser
 import demoblaze.store.Store
 import io.cucumber.java8.En
 import io.cucumber.java8.HookNoArgsBody
-import org.openqa.selenium.WebDriver
 
 class OrderingSteps(private val browser: Browser): En {
 
@@ -43,7 +42,6 @@ class OrderingSteps(private val browser: Browser): En {
         When("I complete the order, for the customer with name {string} and credit card {string}") {
                 customerName: String, creditCardNumber: String ->
             run {
-//                store.saveExpectedTotal()
                 store.placeTheOrder()
                 store.completeForm(customerName, creditCardNumber)
             }

@@ -43,12 +43,6 @@ class Store(
         this.cart.removeItem(productPrice)
     }
 
-    fun saveExpectedTotal() {
-//        this.cart.addItem(
-//            cartPage.getTotalPrice()
-//        )
-    }
-
     fun placeTheOrder() {
         cartPage.placeOrder()
     }

@@ -19,3 +19,13 @@ Note: Assume you have the necessary drivers on your Path.
 * Lazy browser creation
 * User flows defined using Gherkin
 * User flows simulated using Cucumber
+* Continuous building using TravisCI (see badge link above)
+* HTML report (on _target/cucumber-reports_ folder) when tests are executed locally. Current Travis configuration
+does not provide the reports.
+
+# Additional points
+
+* The expected order price is calculated throughout a scenario, 
+by adding and removing item prices when they are added or removed from
+  the cart, instead of relying on app calculated sums, as displayed _Cart_ page or
+  _Place Order_ modal.
