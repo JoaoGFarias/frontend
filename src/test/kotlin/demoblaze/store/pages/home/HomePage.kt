@@ -10,8 +10,6 @@ import org.openqa.selenium.WebElement
 
 class HomePage(private val driver: WebDriver): Page(driver) {
 
-    private val url = "https://www.demoblaze.com/index.html"
-
     fun openPage(): HomePage {
         open(url)
         return this
@@ -51,5 +49,7 @@ class HomePage(private val driver: WebDriver): Page(driver) {
         private val cartPageLinkLocator = By.id("cartur")
 
         fun makeLinkLocatorByInnerText(text: String) = By.ByXPath("//a[text()='$text']")
+
+        private val url = System.getProperty("homePageUrl")
     }
 }

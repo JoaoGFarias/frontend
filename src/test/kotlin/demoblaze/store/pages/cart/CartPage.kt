@@ -1,14 +1,12 @@
 package demoblaze.store.pages.cart
 
-import demoblaze.objects.Wait
 import demoblaze.store.pages.Page
 import org.openqa.selenium.By
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.WebElement
-import org.openqa.selenium.support.ui.ExpectedConditions
 import java.util.logging.Logger
 
-class CartPage(private val driver: WebDriver): Page(driver) {
+class CartPage(driver: WebDriver): Page(driver) {
 
     fun deleteProductFromCart(productName: String) {
         val targetProduct = findProductByName(productName)
