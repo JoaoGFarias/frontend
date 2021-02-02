@@ -11,6 +11,8 @@ import org.openqa.selenium.chrome.ChromeOptions
 import io.cucumber.java8.HookNoArgsBody
 import org.openqa.selenium.By
 import org.openqa.selenium.WebDriver
+import org.openqa.selenium.firefox.FirefoxDriver
+import org.openqa.selenium.firefox.FirefoxOptions
 import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.WebDriverWait
 import java.time.Duration
@@ -21,7 +23,7 @@ class OrderingSteps: En {
 
 
     private lateinit var store: Store
-    private lateinit var driver: ChromeDriver
+    private lateinit var driver: WebDriver
 
     init {
 
@@ -75,17 +77,14 @@ class OrderingSteps: En {
     }
 
     private fun startBrowser(): WebDriver {
-        val options = ChromeOptions()
-        options.setBinary("/usr/bin/brave")
-        driver = ChromeDriver(options)
+        val options = FirefoxOptions()
+        options.addArguments("--headless")
+        driver = FirefoxDriver(options)
         driver.manage().window().maximize()
         return driver
     }
+
     private fun closeStore() {
         store.closeStore()
-    }
-
-    companion object {
-        private val logger = Logger.getLogger(this.javaClass.name)
     }
 }

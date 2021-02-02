@@ -5,6 +5,7 @@ import org.openqa.selenium.support.ui.WebDriverWait
 
 class Wait {
     companion object {
-        fun defaultWait(driver: WebDriver) =  WebDriverWait(driver, Duration.default)
+        fun defaultWait(driver: WebDriver) =
+            WebDriverWait(driver, Duration.default)
     }
 }

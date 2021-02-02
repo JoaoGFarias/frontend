@@ -7,6 +7,11 @@ import org.openqa.selenium.By
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.WebElement
 import org.openqa.selenium.support.ui.ExpectedConditions
+import org.openqa.selenium.StaleElementReferenceException
+
+import org.openqa.selenium.support.ui.WebDriverWait
+import java.util.function.Function
+
 
 class HomePage(private val driver: WebDriver) {
 
@@ -27,15 +32,22 @@ class HomePage(private val driver: WebDriver) {
     }
 
     fun selectProduct(productName: String): ProductPage {
-        findProductByName(productName).click()
+        clickOnProductByName(productName)
         return ProductPage(driver)
     }
 
-    private fun findProductByName(
+    private fun clickOnProductByName(
         productName: String
-    ) = Wait.defaultWait(driver).until(
-            ExpectedConditions.visibilityOfElementLocated(makeLinkLocatorByInnerText(productName))
-        )
+    ) {
+        Wait.defaultWait(driver)
+            .ignoring(StaleElementReferenceException::class.java)
+            .until {
+                findProductByName(productName).click()
+                true
+            }
+    }
+
+    private fun findProductByName(productName: String) = driver.findElement(makeLinkLocatorByInnerText(productName))
 
     fun goToCart(): CartPage {
         driver.findElement(cartPageLinkLocator).click()

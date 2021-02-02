@@ -48,12 +48,24 @@ class CartPage(private val driver: WebDriver) {
     }
 
     fun completeForm(customerName: String, creditCardNumber: String) {
+        addCustomerName(customerName)
+        addCreditCard(creditCardNumber)
+        completePurchase()
+    }
+
+    private fun addCustomerName(customerName: String) {
         Wait.defaultWait(driver).until(
             ExpectedConditions.elementToBeClickable((customerNameLocator))
         ).sendKeys(customerName)
+    }
+
+    private fun addCreditCard(creditCardNumber: String) {
         Wait.defaultWait(driver).until(
             ExpectedConditions.elementToBeClickable((customerCardLocator))
         ).sendKeys(creditCardNumber)
+    }
+
+    private fun completePurchase() {
         driver.findElement(purchaseButtonLocator).click()
     }
 

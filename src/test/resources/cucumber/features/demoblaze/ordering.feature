@@ -12,5 +12,5 @@ Feature: Ordering of products on Demoblaze e-commerce
     Examples: Customer info
       | name    | credit_card_number  |
       | Ada     | 4111 1111 1111 1111 |
-      | Grace   | 5500 0000 0000 0004 |
       | Lisa    | 3400 0000 0000 009  |
+      | Grace   | 5500 0000 0000 0004 |

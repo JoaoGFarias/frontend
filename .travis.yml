@@ -1,0 +1,23 @@
+sudo: true
+dist: xenial
+language: java
+jdk:
+  - openjdk11
+addons:
+  chrome: stable
+  firefox: latest
+install:
+  - wget -N https://chromedriver.storage.googleapis.com/88.0.4324.96/chromedriver_linux64.zip -P ~/
+  - unzip ~/chromedriver_linux64.zip -d ~/
+  - rm ~/chromedriver_linux64.zip
+  - sudo mv -f ~/chromedriver /usr/local/share/
+  - sudo chmod +x /usr/local/share/chromedriver
+  - sudo ln -s /usr/local/share/chromedriver /usr/local/bin/chromedriver
+  - wget -N https://github.com/mozilla/geckodriver/releases/download/v0.29.0/geckodriver-v0.29.0-linux64.tar.gz -P ~/
+  - tar -xzf ~/geckodriver-v0.29.0-linux64.tar.gz -C ~/
+  - rm ~/geckodriver-v0.29.0-linux64.tar.gz
+  - sudo mv -f ~/geckodriver /usr/local/share
+  - sudo chmod +x /usr/local/share/geckodriver
+  - sudo ln -s /usr/local/share/geckodriver /usr/local/bin/geckodriver
+script:
+  - make run_all_tests
