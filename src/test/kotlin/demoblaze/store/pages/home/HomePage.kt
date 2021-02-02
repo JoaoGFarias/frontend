@@ -50,6 +50,6 @@ class HomePage(private val driver: WebDriver): Page(driver) {
 
         fun makeLinkLocatorByInnerText(text: String) = By.ByXPath("//a[text()='$text']")
 
-        private val url = System.getProperty("homePageUrl")
+        private val url = "https://www.demoblaze.com/index.html"
     }
 }

@@ -8,10 +8,11 @@ import java.util.logging.Logger
 
 class CartPage(driver: WebDriver): Page(driver) {
 
-    fun deleteProductFromCart(productName: String) {
+    fun deleteProductFromCart(productName: String): Double {
         val targetProduct = findProductByName(productName)
-        deleteProduct(targetProduct)
+        val productPrice = deleteProduct(targetProduct)
         waitProductDisappear(targetProduct)
+        return productPrice
     }
 
     private fun findProductByName(
@@ -23,8 +24,10 @@ class CartPage(driver: WebDriver): Page(driver) {
 
     private fun findAllProducts() = findAllWhenAvailable(allProductsLocator)
 
-    private fun deleteProduct(targetProduct: WebElement) {
+    private fun deleteProduct(targetProduct: WebElement): Double {
         click(targetProduct, productDeleteButtonLocator)
+        return find(targetProduct, priceLocator).text.toDouble()
+
     }
 
     private fun waitProductDisappear(targetProduct: WebElement) {
@@ -84,6 +87,7 @@ class CartPage(driver: WebDriver): Page(driver) {
         private val logger = Logger.getLogger(this.javaClass.name)
         private val allProductsLocator = By.cssSelector("#tbodyid .success")
         private val productDeleteButtonLocator = By.tagName("a")
+        private val priceLocator = By.cssSelector("td:nth-child(3)")
         private val totalPriceLocator = By.id("totalp")
         private val placeOrderButtonLocator = By.className("btn-success")
         private val customerNameLocator = By.id("name")

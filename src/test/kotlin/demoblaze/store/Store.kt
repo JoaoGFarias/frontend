@@ -17,10 +17,6 @@ class Store(
         homePage = HomePage(driver).openPage()
     }
 
-    fun closeStore() {
-        driver.quit()
-    }
-
     fun addProductToCart(productName: String, category: String) {
         selectCategory(category)
         selectProduct(productName)
@@ -32,7 +28,8 @@ class Store(
 
     private fun selectProduct(productName: String) {
         val productPage = homePage.selectProduct(productName)
-        productPage.addProductToCart()
+        val productPrice = productPage.addProductToCart()
+        this.cart.addItem(productPrice)
         this.visitHomePage()
     }
 
@@ -42,13 +39,14 @@ class Store(
 
 
     fun deleteProductFromCart(productName: String) {
-        cartPage.deleteProductFromCart(productName)
+        val productPrice = cartPage.deleteProductFromCart(productName)
+        this.cart.removeItem(productPrice)
     }
 
     fun saveExpectedTotal() {
-        this.cart.addItem(
-            cartPage.getTotalPrice()
-        )
+//        this.cart.addItem(
+//            cartPage.getTotalPrice()
+//        )
     }
 
     fun placeTheOrder() {

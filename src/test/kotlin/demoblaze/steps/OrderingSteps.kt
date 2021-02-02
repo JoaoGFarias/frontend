@@ -43,7 +43,7 @@ class OrderingSteps(private val browser: Browser): En {
         When("I complete the order, for the customer with name {string} and credit card {string}") {
                 customerName: String, creditCardNumber: String ->
             run {
-                store.saveExpectedTotal()
+//                store.saveExpectedTotal()
                 store.placeTheOrder()
                 store.completeForm(customerName, creditCardNumber)
             }
