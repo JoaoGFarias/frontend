@@ -23,6 +23,7 @@
         <assertk.version>0.23</assertk.version>
         <junit-jupiter-api.version>5.6.0</junit-jupiter-api.version>
         <junit-jupiter-engine.version>5.6.0</junit-jupiter-engine.version>
+        <junit-vintage-engine.version>5.7.0</junit-vintage-engine.version>
         <kotlin-stdlib-jdk8.version>1.4.21</kotlin-stdlib-jdk8.version>
         <cucumber.version>6.9.1</cucumber.version>
 
@@ -134,6 +135,11 @@
             <artifactId>kotlin-logging</artifactId>
             <version>${kotlin-logging.version}</version>
             <type>pom</type>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.vintage</groupId>
+            <artifactId>junit-vintage-engine</artifactId>
+            <version>${junit-vintage-engine.version}</version>
         </dependency>
     </dependencies>
 

@@ -1,4 +1,9 @@
-import io.cucumber.junit.platform.engine.Cucumber
+import io.cucumber.junit.CucumberOptions
+import org.junit.runner.RunWith
+import io.cucumber.junit.Cucumber
 
-@Cucumber
+@RunWith(Cucumber::class)
+@CucumberOptions(
+    plugin = ["html:target/cucumber-reports/cucumber.html"]
+)
 class CucumberTestsRunner
