@@ -20,4 +20,4 @@ install:
   - sudo chmod +x /usr/local/share/geckodriver
   - sudo ln -s /usr/local/share/geckodriver /usr/local/bin/geckodriver
 script:
-  - make run_all_tests
+  - make run_tests_firefox
