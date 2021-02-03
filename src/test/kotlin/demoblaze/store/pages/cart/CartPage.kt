@@ -9,6 +9,7 @@ import java.util.logging.Logger
 class CartPage(driver: WebDriver): Page(driver) {
 
     fun deleteProductFromCart(productName: String): Double {
+        logger.info { "Cart Page - Deleting product: $productName " }
         val targetProduct = findProductByName(productName)
         val productPrice = deleteProduct(targetProduct)
         waitProductDisappear(targetProduct)
@@ -27,7 +28,6 @@ class CartPage(driver: WebDriver): Page(driver) {
     private fun deleteProduct(targetProduct: WebElement): Double {
         click(targetProduct, productDeleteButtonLocator)
         return find(targetProduct, priceLocator).text.toDouble()
-
     }
 
     private fun waitProductDisappear(targetProduct: WebElement) {
@@ -35,10 +35,12 @@ class CartPage(driver: WebDriver): Page(driver) {
     }
 
     fun placeOrder() {
+        logger.info { "Cart Page - Placing order" }
         clickWhenAvailable(placeOrderButtonLocator)
     }
 
     fun completeForm(customerName: String, creditCardNumber: String) {
+        logger.info { "Cart Page - Completing form with user $customerName and credit card $creditCardNumber" }
         addCustomerName(customerName)
         addCreditCard(creditCardNumber)
         completePurchase()
@@ -66,8 +68,8 @@ class CartPage(driver: WebDriver): Page(driver) {
     fun findTotalPurchasePrice(): Double {
         val leadText = find(findSweetAlert(), leadLocator).text!!
         val orderDetails = makeOrderDetails(leadText)
-        logger.info("Order id ${orderDetails["id"]}")
-        logger.info("Order amount ${orderDetails["amount"]}")
+        logger.info { "Order id ${orderDetails["id"]}" }
+        logger.info { "Order amount ${orderDetails["amount"]}" }
         return extractValueOfOrder(orderDetails)
     }
 
@@ -92,6 +94,7 @@ class CartPage(driver: WebDriver): Page(driver) {
         private val purchaseButtonLocator = By.cssSelector("#orderModal .modal-footer .btn-primary")
         private val sweetAlertLocator = By.className("sweet-alert")
         private val successIconLocator = By.className("sa-success")
+
     }
 }
 

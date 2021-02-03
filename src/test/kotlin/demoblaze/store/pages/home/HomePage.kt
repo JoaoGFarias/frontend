@@ -6,6 +6,7 @@ import demoblaze.store.pages.product.ProductPage
 import org.openqa.selenium.By
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.WebElement
+import java.util.logging.Logger
 
 
 class HomePage(private val driver: WebDriver): Page(driver) {
@@ -16,6 +17,7 @@ class HomePage(private val driver: WebDriver): Page(driver) {
     }
 
     fun selectCategory(category: String) {
+        logger.info { "Home Page - Selecting category: $category" }
         val categories = findCategories()
         selectCategory(categories, category)
     }
@@ -27,6 +29,7 @@ class HomePage(private val driver: WebDriver): Page(driver) {
     }
 
     fun selectProduct(productName: String): ProductPage {
+        logger.info { "Home Page - Selecting product: $productName" }
         clickOnProductByName(productName)
         return ProductPage(driver)
     }
@@ -40,6 +43,7 @@ class HomePage(private val driver: WebDriver): Page(driver) {
     private fun findProductByName(productName: String) = find(makeLinkLocatorByInnerText(productName))
 
     fun goToCart(): CartPage {
+        logger.info { "Home Page - Going to Cart page" }
         clickWhenAvailable(cartPageLinkLocator)
         return CartPage(driver)
     }
@@ -51,5 +55,7 @@ class HomePage(private val driver: WebDriver): Page(driver) {
         fun makeLinkLocatorByInnerText(text: String) = By.ByXPath("//a[text()='$text']")
 
         private val url = System.getProperty("homePageUrl")
+
+        private val logger = Logger.getLogger(this.javaClass.name)
     }
 }
