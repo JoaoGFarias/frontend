@@ -34,9 +34,6 @@ class CartPage(driver: WebDriver): Page(driver) {
         waitToDisappear(targetProduct)
     }
 
-    fun getTotalPrice() =
-        getTextWhenAvailable(totalPriceLocator).toDouble()
-
     fun placeOrder() {
         clickWhenAvailable(placeOrderButtonLocator)
     }
@@ -88,7 +85,6 @@ class CartPage(driver: WebDriver): Page(driver) {
         private val allProductsLocator = By.cssSelector("#tbodyid .success")
         private val productDeleteButtonLocator = By.tagName("a")
         private val priceLocator = By.cssSelector("td:nth-child(3)")
-        private val totalPriceLocator = By.id("totalp")
         private val placeOrderButtonLocator = By.className("btn-success")
         private val customerNameLocator = By.id("name")
         private val customerCardLocator = By.id("card")
